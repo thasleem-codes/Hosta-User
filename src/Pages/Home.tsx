@@ -4,6 +4,8 @@ import {
   UserRound,
   Building2,
   Ambulance,
+  Droplet,
+  Search,
 } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,8 +17,8 @@ const features = [
   { name: "Doctors", icon: UserRound, href: "/services/doctors" },
   { name: "Specialties", icon: Building2, href: "/services/specialties" },
   { name: "Ambulance", icon: Ambulance, href: "/services/ambulance" },
-//   { name: "Donate Blood", icon: Droplet, href: "/services/blood-donation" },
-//   { name: "Find Blood", icon: Search, href: "/services/blood-request" },
+  { name: "Donate Blood", icon: Droplet, href: "/services/blood-donation" },
+  { name: "Find Blood", icon: Search, href: "/services/blood-request" },
 ];
 
 const adImages = [
