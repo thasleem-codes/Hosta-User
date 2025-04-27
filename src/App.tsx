@@ -20,6 +20,8 @@ import { getCurrentLocation } from "./Components/getCurrentLocation";
 import { updateUserData } from "./Redux/userData";
 import { setAmbulances } from "./Redux/AmbulanceData";
 import NotFound from "./Pages/NotFound";
+import DonateBloodPage from "./Pages/DonateBlood";
+import FindBloodPage from "./Pages/FindBlood";
 
 function App() {
   const dispatch = useDispatch();
@@ -74,6 +76,8 @@ function App() {
           <Route path="doctors" element={<DoctorsPage />} />
           <Route path="specialties" element={<SpecialtiesPage />} />
           <Route path="ambulance" element={<AmbulanceServicesPage />} />
+          <Route path="blood-donation" element={<DonateBloodPage />} />
+          <Route path="blood-request" element={<FindBloodPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
