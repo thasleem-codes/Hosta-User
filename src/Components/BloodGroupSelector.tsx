@@ -10,20 +10,21 @@ export type BloodGroup =
   | "O+"
   | "O-";
 
-export interface Donor {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  bloodGroup: BloodGroup;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  lastDonation: string;
-  isAvailable: boolean;
-  createdAt: string;
-}
+  export interface Donor {
+    name: string;
+    email: string;
+    phone: string;
+    bloodGroup: BloodGroup;
+    age: number | undefined;
+    address:{
+      place: string,
+      pincode: string
+   }, 
+   lastDonationDate: string;
+    isAvailable: boolean;
+    createdAt: string;
+  }
+  
 
 interface BloodGroupSelectorProps {
   value: BloodGroup | "";

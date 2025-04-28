@@ -13,7 +13,7 @@ export interface SearchParams {
 
 const DonorCard: React.FC<DonorCardProps> = ({ donor }) => {
   const getLastDonationText = () => {
-    const lastDonation = new Date(donor.lastDonation);
+    const lastDonation = new Date(donor.lastDonationDate);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - lastDonation.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -49,7 +49,7 @@ const DonorCard: React.FC<DonorCardProps> = ({ donor }) => {
         <div className="flex items-start">
           <MapPin className="h-4 w-4 text-green-600 mr-2 mt-1" />
           <span>
-            {donor.city}, {donor.state} {donor.zipCode}
+             {donor.address.place} {donor.address.pincode}
           </span>
         </div>
 
