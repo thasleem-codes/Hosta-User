@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Droplet, Check } from "lucide-react";
 import BloodGroupSelector, { BloodGroup, Donor } from "../Components/BloodGroupSelector";
-import axios from "axios";
 import { apiClient } from "../Components/Axios";
 
 
