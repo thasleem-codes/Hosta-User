@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Droplet, Check } from "lucide-react";
 import BloodGroupSelector, { BloodGroup, Donor } from "../Components/BloodGroupSelector";
+import axios from "axios";
+import { apiClient } from "../Components/Axios";
 
 
 const DonateBloodPage: React.FC = () => {
@@ -10,26 +12,64 @@ const DonateBloodPage: React.FC = () => {
     email: "",
     phone: "",
     bloodGroup: "O+",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    lastDonation: "",
+    age: undefined,
+    address:{
+              place: "",
+              pincode: ""
+           }, 
+  lastDonationDate: "",
     isAvailable: true,
   });
+
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value, type } = e.target;
+
+  //   if (type === "checkbox") {
+
+  //     const checked = (e.target as HTMLInputElement).checked;
+  //     setFormData((prev) => ({ ...prev, [name]: checked }));
+  //   } else {
+  //     setFormData((prev) => ({ ...prev, [name]: value }));
+  //   }
+  // };
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-
-    if (type === "checkbox") {
+  
+    if (name === "city") {
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          place: value,
+        },
+      }));
+    } else if (name === "pincode") {
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          pincode: value,
+        },
+      }));
+    } else if (name === "age") {
+      setFormData((prev) => ({
+        ...prev,
+        age: Number(value),
+      }));
+    } else if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData((prev) => ({ ...prev, [name]: checked }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+  
 
   const handleBloodGroupChange = (value: BloodGroup | "") => {
     if (value) {
@@ -37,17 +77,35 @@ const DonateBloodPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit =  async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Create new donor with ID and timestamp
-    // const newDonor: Donor = {
-    //   ...formData,
-    //   createdAt: new Date().toISOString(),
-    // };
+    const newDonor: Donor = {
+      ...formData,
+      createdAt: new Date().toISOString(),
+    };
 
     // Save to local storage
     // Here connect to backend to create new Doner---------------------------------------------------------(1)
+
+    try {
+      const response = await apiClient.post('/api/donors', { newDonor });
+    
+      alert(`Donor created successfully: ${response.data.message}`);
+      
+    } catch (error: any) {
+      if (error.response) {
+        if (error.response.status === 409) {
+          alert(`Error: ${error.response.data.message}`);
+        } else {
+          alert(`Error: ${error.response.data.message || "Something went wrong"}`);
+        }
+      } else {
+        alert("Network Error. Please try again.");
+      }
+    }
+    
 
     // Show success message
     setFormSubmitted(true);
@@ -60,15 +118,19 @@ const DonateBloodPage: React.FC = () => {
         email: "",
         phone: "",
         bloodGroup: "O+",
-        address: "",
-        city: "",
-        state: "",
-        zipCode: "",
-        lastDonation: "",
+        age: undefined,
+        lastDonationDate: "",
         isAvailable: true,
+        address:{
+          place: "",
+          pincode: ""
+       }, 
       });
     }, 3000);
   };
+
+
+
 
   return (
     <div className="min-h-screen bg-green-50">
@@ -180,7 +242,7 @@ const DonateBloodPage: React.FC = () => {
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  {/* <div className="md:col-span-2">
                     <label
                       htmlFor="address"
                       className="block text-sm font-medium text-gray-700 mb-1"
@@ -196,7 +258,7 @@ const DonateBloodPage: React.FC = () => {
                       required
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
-                  </div>
+                  </div> */}
 
                   <div>
                     <label
@@ -209,25 +271,7 @@ const DonateBloodPage: React.FC = () => {
                       type="text"
                       id="city"
                       name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="state"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      State
-                    </label>
-                    <input
-                      type="text"
-                      id="state"
-                      name="state"
-                      value={formData.state}
+                      value={formData.address.place}
                       onChange={handleChange}
                       required
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -239,18 +283,36 @@ const DonateBloodPage: React.FC = () => {
                       htmlFor="zipCode"
                       className="block text-sm font-medium text-gray-700 mb-1"
                     >
-                      Zip Code
+                      Pin Code
                     </label>
                     <input
                       type="text"
-                      id="zipCode"
-                      name="zipCode"
-                      value={formData.zipCode}
+                      id="pincode"
+                      name="pincode"
+                      value={formData.address.pincode}
                       onChange={handleChange}
                       required
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
+                  <div>
+                    <label
+                      htmlFor="state"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      age
+                    </label>
+                    <input
+                      type="number"
+                      id="age"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleChange}
+                      required
+                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+
 
                   <div>
                     <label
@@ -261,9 +323,9 @@ const DonateBloodPage: React.FC = () => {
                     </label>
                     <input
                       type="date"
-                      id="lastDonation"
-                      name="lastDonation"
-                      value={formData.lastDonation}
+                      id="lastDonationDate"
+                      name="lastDonationDate"
+                      value={formData.lastDonationDate}
                       onChange={handleChange}
                       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
