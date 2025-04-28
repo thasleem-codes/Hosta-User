@@ -20,21 +20,6 @@ const DonateBloodPage: React.FC = () => {
     isAvailable: true,
   });
 
-  // const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value, type } = e.target;
-
-  //   if (type === "checkbox") {
-
-  //     const checked = (e.target as HTMLInputElement).checked;
-  //     setFormData((prev) => ({ ...prev, [name]: checked }));
-  //   } else {
-  //     setFormData((prev) => ({ ...prev, [name]: value }));
-  //   }
-  // };
-
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -79,14 +64,11 @@ const DonateBloodPage: React.FC = () => {
   const handleSubmit =  async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Create new donor with ID and timestamp
+    // Create new donor with timestamp
     const newDonor: Donor = {
       ...formData,
       createdAt: new Date().toISOString(),
     };
-
-    // Save to local storage
-    // Here connect to backend to create new Doner---------------------------------------------------------(1)
 
     try {
       const response = await apiClient.post('/api/donors', { newDonor });
@@ -240,24 +222,6 @@ const DonateBloodPage: React.FC = () => {
                       required
                     />
                   </div>
-
-                  {/* <div className="md:col-span-2">
-                    <label
-                      htmlFor="address"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div> */}
 
                   <div>
                     <label
