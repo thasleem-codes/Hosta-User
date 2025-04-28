@@ -35,7 +35,7 @@ const FindBloodPage: React.FC = () => {
     try {
       const params: any = {
         page,
-        limit: 6, // You can change page size here
+        limit: 6, 
         bloodGroup: searchParams.bloodGroup || undefined,
       };
 
