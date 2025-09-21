@@ -24,7 +24,7 @@ const features = [
 const adImages = [
   "https://img.freepik.com/free-vector/flat-design-medical-facebook-ad_23-2149091913.jpg",
   "https://img.freepik.com/free-vector/flat-design-medical-facebook-ad_23-2149091912.jpg",
-  "https://th.bing.com/th/id/OIP.yTcG-jZWUKXEzm18Jcr2yAHaEK?w=800&h=450&rs=1&pid=ImgDetMain",
+  "https://mangalprabhu.com/wp-content/uploads/2024/03/Pregnancy-Offer.jpg",
   "https://dcassetcdn.com/design_img/3242090/43775/43775_17860005_3242090_1b999885_image.jpg",
 ];
 
