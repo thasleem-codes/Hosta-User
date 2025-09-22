@@ -22,6 +22,7 @@ import { setAmbulances } from "./Redux/AmbulanceData";
 import NotFound from "./Pages/NotFound";
 import DonateBloodPage from "./Pages/DonateBlood";
 import FindBloodPage from "./Pages/FindBlood";
+import Profile from "./Pages/Settings";
 
 function App() {
   const dispatch = useDispatch();
@@ -61,6 +62,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
+        <Route path="/settings" element={<Profile />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/Registration" element={<UserRegistration />} />
         <Route path="/login" element={<UserLogin />} />

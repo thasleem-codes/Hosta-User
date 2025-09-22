@@ -1,11 +1,12 @@
 import Slider from "react-slick";
 import {
-  Hospital,
-  UserRound,
+  // UserRound,
+  // Search,
+    Ambulance,
   Building2,
-  Ambulance,
   Droplet,
-  Search,
+  Hospital,
+  Stethoscope
 } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,13 +14,22 @@ import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
 
 const features = [
-  { name: "Hospitals", icon: Hospital, href: "/services/hospitals/types" },
-  { name: "Doctors", icon: UserRound, href: "/services/doctors" },
-  { name: "Specialties", icon: Building2, href: "/services/specialties" },
-  { name: "Ambulance", icon: Ambulance, href: "/services/ambulance" },
-  { name: "Donate Blood", icon: Droplet, href: "/services/blood-donation" },
-  { name: "Find Blood", icon: Search, href: "/services/blood-request" },
+  { name: "Hospitals", icon: Hospital,  href: "/services/hospitals/types" },
+  { name: "Doctors", icon: Stethoscope,  href:  "/services/doctors" },
+  { name: "Specialties", icon: Building2,  href:  "/services/specialties"},
+  { name: "Ambulance", icon: Ambulance,  href:"/services/ambulance" },
+  { name: "Blood", icon: Droplet,  href:  "/services/blood-request" },
 ];
+
+// const features = [
+//   { name: "Hospitals", icon: Hospital, href: "/services/hospitals/types" },
+//   { name: "Doctors", icon: UserRound, href: "/services/doctors" },
+//   { name: "Specialties", icon: Building2, href: "/services/specialties" },
+//   { name: "Ambulance", icon: Ambulance, href: "/services/ambulance" },
+//   { name: "Donate Blood", icon: Droplet, href: "/services/blood-donation" },
+//   { name: "Find Blood", icon: Search, href: "/services/blood-request" },
+// ];
+
 
 const adImages = [
   "https://img.freepik.com/free-vector/flat-design-medical-facebook-ad_23-2149091913.jpg",
@@ -63,10 +73,10 @@ export default function HomePage() {
 
         <h2 className="text-2xl font-bold text-green-800 mb-4">Our Services</h2>
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* <div className={"grid grid-cols-2 gap-4"}>
           {features.map((feature) => (
             <Link key={feature.name} to={feature.href}>
-              <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center h-32">
+              <div className={` bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center h-32`}>
                 <feature.icon className="h-8 w-8 text-green-600 mb-2" />
                 <h3 className="text-sm font-semibold text-green-800 text-center">
                   {feature.name}
@@ -74,8 +84,33 @@ export default function HomePage() {
               </div>
             </Link>
           ))}
-        </div>
+        </div> */}
+
+           <div className="flex flex-wrap justify-between mx-4">
+        {features.map((feature, index) => (
+          <Link
+            key={feature.name}
+            to={feature.href}
+            className={`
+              bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300
+              flex flex-col items-center justify-center mb-4
+              ${index === features.length - 1 && features.length % 2 !== 0
+                ? "w-full"       // full width for the last card if odd
+                : "w-[calc(50%-0.5rem)]"} // half width (gap is ~0.5rem each side)
+            `}
+          >
+            <feature.icon className="h-8 w-8 text-green-600 mb-2" />
+            <p className="text-sm font-semibold text-emerald-800 text-center">
+              {feature.name}
+            </p>
+          </Link>
+        ))}
+      </div>
+
+
       </main>
     </div>
   );
 }
+
+
