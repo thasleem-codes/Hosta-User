@@ -22,7 +22,6 @@ import bloodData from "./BloodData";
 export const store = configureStore({
   reducer: {
     userRegistration: userRegistrationSlice,
-//     userLogin: userLoginSlice,,
     userLogin: userLoginSlice,
     hospitalData: hospitalSlice,
     ambulanceData: ambulaceData,
