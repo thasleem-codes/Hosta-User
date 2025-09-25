@@ -27,34 +27,43 @@ import Profile from "./Pages/Settings";
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
-    const getData = async () => {
+    const init = async () => {
       try {
-        const result = await apiClient.get("/api/hospitals");
-        dispatch(setHospitalData({ data: result.data.data }));
         const [lat, lon] = await getCurrentLocation();
-        dispatch(
-          updateUserData({ latitude: lat as number, longitude: lon as number })
-        );
-        const ambulances = await apiClient.get("/api/ambulances");
-        dispatch(setAmbulances(ambulances.data.data));
-        const user = await apiClient.get("/api/users", {
+        dispatch(updateUserData({ latitude: lat, longitude: lon }));
+      } catch (err) {
+        console.error("Failed to get location", err);
+      }
+
+      try {
+        // Fetch user data if logged in
+        const _id = localStorage.getItem("userId");
+        if (!_id) return;
+        const user = await apiClient.get(`/api/users/${_id}`, {
           withCredentials: true,
         });
-        const { email, name, phone, password, _id } = user.data.data;
-        dispatch(
-          updateUserData({
-            email: email,
-            name: name,
-            password: password,
-            phone: phone,
-            _id: _id as string,
-          })
-        );
+        if (user.data?.data) {
+          console.log(user.data.data, " user info");
+          dispatch(updateUserData(user.data.data));
+        }
       } catch (err) {
         console.error(err);
       }
+
+      try {
+        const ambulances = await apiClient.get("/api/ambulances");
+        dispatch(setAmbulances(ambulances.data.data));
+      } catch (error) {
+        console.error("Failed to fetch ambulances", error);
+      }
+      try {
+        const result = await apiClient.get("/api/hospitals");
+        dispatch(setHospitalData({ data: result.data.data }));
+      } catch (error) {
+        console.error("Failed to fetch hospitals", error);
+      }
     };
-    getData();
+    init();
   }, []);
 
   return (
