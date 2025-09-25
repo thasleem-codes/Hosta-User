@@ -11,6 +11,23 @@ node_modules
 dist
 dist-ssr
 *.local
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.next
+out
+build
+.cache
+.tmp
+.temp
+.expo
+.webpack
+.expo-shared
+ios/Pods
+android/.gradle
+android/app/build
+android/build
+*.keystore
 
 # Editor directories and files
 .vscode/*
