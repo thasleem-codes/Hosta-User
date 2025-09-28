@@ -14,7 +14,7 @@ import PasswordReset from "./Pages/PasswordReset";
 import { useEffect } from "react";
 import { apiClient } from "./Components/Axios";
 import { useDispatch } from "react-redux";
-import { setHospitalData } from "./Redux/HospitalsData";
+// import { setHospitalData } from "./Redux/HospitalsData";
 import HospitalTypeCards from "./Pages/HospitalTypes";
 import { getCurrentLocation } from "./Components/getCurrentLocation";
 import { updateUserData } from "./Redux/userData";
@@ -43,7 +43,6 @@ function App() {
           withCredentials: true,
         });
         if (user.data?.data) {
-          console.log(user.data.data, " user info");
           dispatch(updateUserData(user.data.data));
         }
       } catch (err) {
@@ -56,12 +55,12 @@ function App() {
       } catch (error) {
         console.error("Failed to fetch ambulances", error);
       }
-      try {
-        const result = await apiClient.get("/api/hospitals");
-        dispatch(setHospitalData({ data: result.data.data }));
-      } catch (error) {
-        console.error("Failed to fetch hospitals", error);
-      }
+      // try {
+      //   const result = await apiClient.get("/api/hospitals");
+      //   dispatch(setHospitalData({ data: result.data.data }));
+      // } catch (error) {
+      //   console.error("Failed to fetch hospitals", error);
+      // }
     };
     init();
   }, []);
