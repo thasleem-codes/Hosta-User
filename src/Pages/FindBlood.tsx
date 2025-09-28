@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Phone, Search, MapPin, ChevronDown, X } from "lucide-react";
+import { Phone, Search, MapPin, ChevronDown } from "lucide-react";
 import { RootState } from "../Redux/Store";
 import { setBloods } from "../Redux/BloodData";
 import { apiClient } from "../Components/Axios";
