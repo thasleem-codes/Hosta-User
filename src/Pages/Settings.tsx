@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { errorToast, successToast } from "../Components/Toastify";
-import { ArrowLeft, Delete, Edit2, Plus } from "lucide-react";
+import { ArrowLeft, Trash2, Edit2, Plus } from "lucide-react";
 import { apiClient } from "../Components/Axios";
 import { updateUserData } from "../Redux/userData";
 import { RootState } from "../Redux/Store";
@@ -20,13 +20,6 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState<{ name: string }>({
     name: "",
-  });
-  const [modalOpen, setModalOpen] = useState(false);
-  const [bloodData, setBloodData] = useState({
-    bloodGroup: "",
-    dateOfBirth: "",
-    place: "",
-    pincode: "",
   });
 
   const getInitial = (name: string) => name?.charAt(0)?.toUpperCase() || "";
@@ -49,40 +42,6 @@ export default function Profile() {
       setIsEditing(false);
     } catch (err: any) {
       errorToast(err.response?.data?.message || "Profile update failed");
-    }
-  };
-
-  /** Save blood info from modal */
-  const handleSaveBlood = async () => {
-    try {
-      if (
-        !bloodData.bloodGroup ||
-        !bloodData.dateOfBirth ||
-        !bloodData.place ||
-        !bloodData.pincode
-      ) {
-        return errorToast("Please fill all fields");
-      }
-
-      let res;
-      if (donor?._id) {
-        res = await apiClient.put(`/api/donors/${donor._id}`, bloodData, {
-          withCredentials: true,
-        });
-      } else {
-        res = await apiClient.post(
-          `/api/donors`,
-          { ...bloodData, userId: user._id },
-          { withCredentials: true }
-        );
-      }
-
-      setDonor(res.data);
-      successToast("Blood info saved successfully");
-      setModalOpen(false);
-    } catch (err) {
-      console.error(err);
-      errorToast("Failed to save blood info");
     }
   };
 
@@ -137,8 +96,6 @@ export default function Profile() {
       </div>
     );
   }
-
-  const bloodGroups = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 
   return (
     <div className="min-h-screen bg-green-50 py-10 px-4">
@@ -212,16 +169,16 @@ export default function Profile() {
             <button
               className="flex items-center bg-green-50 p-2 rounded-full shadow hover:bg-green-100 transition-colors"
               onClick={() => {
-                setBloodData({
-                  bloodGroup: donor?.bloodGroup || "",
-                  dateOfBirth: donor?.dateOfBirth || "",
-                  place: donor?.address?.place || "",
-                  pincode: donor?.address?.pincode || "",
-                });
-                setModalOpen(true);
+                donor
+                  ? handleDelete(donor._id)
+                  : navigate("/services/blood-donation");
               }}
             >
-              <Plus size={20} className="text-green-600" />
+              {donor ? (
+                <Trash2 size={20} className="text-red-600" />
+              ) : (
+                <Plus size={20} className="text-green-600" />
+              )}
             </button>
           </div>
 
@@ -255,13 +212,6 @@ export default function Profile() {
                   </span>
                 </div>
               </div>
-
-              <button
-                className="absolute top-4 right-4 bg-red-50 rounded-full p-2 shadow-md hover:bg-red-100 transition-colors"
-                onClick={() => handleDelete(donor._id)}
-              >
-                <Delete size={20} className="text-red-600" />
-              </button>
             </>
           ) : (
             <p className="text-gray-600 text-center">
@@ -270,91 +220,6 @@ export default function Profile() {
           )}
         </div>
       </div>
-
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md relative shadow-lg">
-            <button
-              onClick={() => setModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <h2 className="text-lg font-bold text-gray-800 mb-4 text-center">
-              {donor ? "Update Blood Info" : "Add Blood Info"}
-            </h2>
-
-            <div className="space-y-3">
-              {/* <input
-                type="text"
-                placeholder="Blood Group"
-                value={bloodData.bloodGroup}
-                onChange={(e) =>
-                  setBloodData({ ...bloodData, bloodGroup: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-              /> */}
-              <div className="mb-4">
-                <label className="text-gray-700 font-semibold mb-2 block">
-                  Blood Group
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {bloodGroups.map((bg) => (
-                    <button
-                      key={bg}
-                      onClick={() =>
-                        setBloodData({ ...bloodData, bloodGroup: bg })
-                      }
-                      className={`px-4 py-2 rounded-full text-sm font-bold transition-colors
-          ${
-            bloodData.bloodGroup === bg
-              ? "bg-green-700 text-white"
-              : "bg-green-100 text-green-700 hover:bg-green-200"
-          }`}
-                    >
-                      {bg}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <input
-                type="date"
-                placeholder="Date of Birth"
-                value={bloodData.dateOfBirth}
-                onChange={(e) =>
-                  setBloodData({ ...bloodData, dateOfBirth: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Place"
-                value={bloodData.place}
-                onChange={(e) =>
-                  setBloodData({ ...bloodData, place: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-              />
-              <input
-                type="number"
-                placeholder="Pin code"
-                value={bloodData.pincode}
-                onChange={(e) =>
-                  setBloodData({ ...bloodData, pincode: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
-              />
-            </div>
-
-            <button
-              className="mt-4 w-full bg-green-600 text-white py-2 rounded-xl font-semibold hover:bg-green-700 transition-colors"
-              onClick={handleSaveBlood}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
