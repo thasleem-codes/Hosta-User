@@ -8,16 +8,16 @@ interface HospitalType {
 }
 
 const HospitalTypeCard: React.FC<HospitalType> = ({ title, image }) => (
-  <div className="bg-white rounded-lg shadow-md overflow-hidden">
-    <div className="p-2 flex flex-col items-center justify-center aspect-square">
-      <div className="w-28 h-28 mb-2">
+  <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+    <div className="p-3 flex flex-col items-center justify-center">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 mb-2">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover rounded-full"
+          className="w-full h-full object-cover rounded-full border border-green-200"
         />
       </div>
-      <span className="text-base font-medium text-green-800 text-center">
+      <span className="text-sm sm:text-base font-medium text-green-800 text-center">
         {title}
       </span>
     </div>
@@ -26,51 +26,79 @@ const HospitalTypeCard: React.FC<HospitalType> = ({ title, image }) => (
 
 const HospitalTypeCards: React.FC = () => {
   const navigate = useNavigate();
+
   const hospitalTypes: HospitalType[] = [
     {
       title: "Allopathy",
       image:
-        "https://th.bing.com/th/id/OIP.47Ra6GUykfLRORz713KmpwHaE6?w=232&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075523/Allopathy_ybcnoz.jpg",
     },
     {
       title: "Homeopathy",
       image:
-        "https://th.bing.com/th/id/OIP.mHSxohdwswyJLGlqtk3wfwHaE7?rs=1&pid=ImgDetMain",
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/Homeopathy_iqjctu.jpg",
     },
     {
       title: "Ayurveda",
       image:
-        "https://th.bing.com/th/id/OIP.naR0FBavTXRS08FGcT4mGAHaEn?rs=1&pid=ImgDetMain",
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075523/Ayurveda_wu9ia9.jpg",
     },
     {
       title: "Unani",
       image:
-        "https://th.bing.com/th/id/R.6f6ce2d6663331e471b4f4a13ad67640?rik=wMqEC%2bmw38ScAg&riu=http%3a%2f%2funanihakeem.in%2fimages%2fbg%2fbg4.jpg&ehk=w3pjl0aV%2fqER9efY0FgzhhzzP7J6cVx%2fJIBm8PXRJts%3d&risl=&pid=ImgRaw&r=0",
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/Unani_exl5fx.jpg",
     },
     {
       title: "Acupuncture",
       image:
-        "https://th.bing.com/th/id/OIP.eVNH_oc408tN7zftvmyqXwHaE7?w=281&h=187&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075523/Acupunture_ajxuvc.jpg",
+    },
+
+    {
+      title: "De-addiction",
+      image:
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075523/Deaddiction_iiaqml.jpg",
+    },
+    {
+      title: "Mental Health",
+      image:
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/mental_health_cjcvop.jpg",
+    },
+    {
+      title: "Laboratory",
+      image:
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/Lab_kuj0ha.jpg",
+    },
+    {
+      title: "Eye Care",
+      image:
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/Eye_wyynmz.jpg",
+    },
+    {
+      title: "Physiotherapy",
+      image:
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/Physiotherapy_i6ezv8.jpg",
     },
     {
       title: "Other",
       image:
-        "https://th.bing.com/th/id/OIP.4hOrUMJve5Es4c3Uvq7evAHaHr?w=2131&h=2209&rs=1&pid=ImgDetMain",
+        "https://res.cloudinary.com/dupevol0e/image/upload/v1759075524/Others_wf9afk.jpg",
     },
   ];
 
   return (
-    <div className="bg-green-50 py-4 px-2 sm:py-6 sm:px-4 h-screen">
+    <div className="bg-green-50 min-h-screen py-4 px-3 sm:py-6 sm:px-4">
       <div className="max-w-7xl mx-auto">
-        <Header onBackClick={() => navigate("/")} title="Hospiatl Types" />
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-5">
+        <Header onBackClick={() => navigate("/")} title="Hospital Types" />
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 sm:gap-5 mt-4">
           {hospitalTypes.map((type, index) => (
-            <Link to={`/services/hospitals?type=${type.title}`}>
-              <HospitalTypeCard
-                key={index}
-                title={type.title}
-                image={type.image}
-              />
+            <Link
+              to={`/services/hospitals?type=${type.title}`}
+              key={index}
+              className="block"
+            >
+              <HospitalTypeCard title={type.title} image={type.image} />
             </Link>
           ))}
         </div>
