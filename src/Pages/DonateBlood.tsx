@@ -329,12 +329,16 @@ const DonateBloodPage = () => {
         },
         userId: user?._id,
       };
-      const res = await apiClient.post(
+      await apiClient.post(
         "/api/donors",
         { newDonor: payload },
         { withCredentials: true }
       );
-      dispatch(addBlood(res.data.donor));
+
+      const result = await apiClient.get(`/api/donors`);
+
+      dispatch(addBlood(result.data.donors));
+
       successToast("Donor created successfully!");
       navigate(-1);
     } catch (err: any) {
