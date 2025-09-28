@@ -1,10 +1,16 @@
-
-
 import { useEffect, useState } from "react";
-import { Phone, Calendar, MapPin, Droplet, Hash, Search, X } from "lucide-react";
+import {
+  Phone,
+  Calendar,
+  MapPin,
+  Droplet,
+  Hash,
+  Search,
+  X,
+} from "lucide-react";
 import { apiClient } from "../Components/Axios";
 import { errorToast, successToast } from "../Components/Toastify";
-import {  useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addBlood } from "../Redux/BloodData";
 import { useNavigate } from "react-router-dom";
 import countriesData from "world-countries";
@@ -45,7 +51,14 @@ interface FormData {
 }
 
 const BLOOD_GROUPS: Exclude<BloodGroup, "">[] = [
-  "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-",
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "O+",
+  "O-",
+  "AB+",
+  "AB-",
 ];
 
 // Searchable Dropdown Component
@@ -92,7 +105,7 @@ const SearchableDropdown = ({
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="flex items-center p-4 border-b">
           <Search size={18} className="text-emerald-600 mr-2" />
           <input
@@ -110,7 +123,9 @@ const SearchableDropdown = ({
             <button
               key={item.id}
               className={`w-full text-left p-3 hover:bg-emerald-50 transition-colors ${
-                selectedValue === item.id ? "bg-emerald-50 border-r-4 border-emerald-600" : ""
+                selectedValue === item.id
+                  ? "bg-emerald-50 border-r-4 border-emerald-600"
+                  : ""
               }`}
               onClick={() => handleSelect(item)}
             >
@@ -138,10 +153,10 @@ const DonateBloodPage = () => {
     lastDonationDate: "",
     country: "",
     state: "",
-    district: ""
+    district: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   // Modal states
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [showStateModal, setShowStateModal] = useState(false);
@@ -157,17 +172,17 @@ const DonateBloodPage = () => {
   const countriesStatesCities = StatesCities as CountryData[];
 
   // Blood groups formatted for dropdown
-  const bloodGroupOptions = BLOOD_GROUPS.map(bg => ({
+  const bloodGroupOptions = BLOOD_GROUPS.map((bg) => ({
     id: bg,
-    name: bg
+    name: bg,
   }));
 
   useEffect(() => {
     // Initialize countries from world-countries package
-    const formattedCountries = countriesData.map((country : any) => ({
+    const formattedCountries = countriesData.map((country: any) => ({
       id: country.cca3,
       name: country.name.common,
-      flag: country.flag
+      flag: country.flag,
     }));
     setCountries(formattedCountries);
 
@@ -194,21 +209,22 @@ const DonateBloodPage = () => {
   // Update states when country changes
   useEffect(() => {
     if (formData.country) {
-      const selectedCountry = countriesStatesCities.find((country: CountryData) => 
-        country.iso3 === formData.country || country.name === formData.country
+      const selectedCountry = countriesStatesCities.find(
+        (country: CountryData) =>
+          country.iso3 === formData.country || country.name === formData.country
       );
-      
+
       if (selectedCountry && Array.isArray(selectedCountry.states)) {
         const stateOptions = selectedCountry.states.map((state: State) => ({
           id: state.state_code,
-          name: state.name
+          name: state.name,
         }));
         setStates(stateOptions);
       } else {
         setStates([]);
       }
-      
-      setFormData(prev => ({ ...prev, state: "", district: "" }));
+
+      setFormData((prev) => ({ ...prev, state: "", district: "" }));
       setDistricts([]);
     }
   }, [formData.country]);
@@ -216,27 +232,29 @@ const DonateBloodPage = () => {
   // Update districts when state changes
   useEffect(() => {
     if (formData.state && formData.country) {
-      const selectedCountry = countriesStatesCities.find((country: CountryData) => 
-        country.iso3 === formData.country || country.name === formData.country
+      const selectedCountry = countriesStatesCities.find(
+        (country: CountryData) =>
+          country.iso3 === formData.country || country.name === formData.country
       );
-      
+
       if (selectedCountry) {
-        const selectedState = selectedCountry.states.find((state: State) => 
-          state.state_code === formData.state || state.name === formData.state
+        const selectedState = selectedCountry.states.find(
+          (state: State) =>
+            state.state_code === formData.state || state.name === formData.state
         );
-        
+
         if (selectedState && Array.isArray(selectedState.cities)) {
           const districtOptions = selectedState.cities.map((city: City) => ({
             id: city.id.toString(),
-            name: city.name
+            name: city.name,
           }));
           setDistricts(districtOptions);
         } else {
           setDistricts([]);
         }
       }
-      
-      setFormData(prev => ({ ...prev, district: "" }));
+
+      setFormData((prev) => ({ ...prev, district: "" }));
     }
   }, [formData.state, formData.country]);
 
@@ -249,7 +267,11 @@ const DonateBloodPage = () => {
   const getDisplayName = (data: any, value: any, defaultValue: string) => {
     if (!value) return defaultValue;
     const item = data.find((item: any) => item.id === value);
-    return item ? (item.flag ? `${item.flag} ${item.name}` : item.name) : defaultValue;
+    return item
+      ? item.flag
+        ? `${item.flag} ${item.name}`
+        : item.name
+      : defaultValue;
   };
 
   const validate = () => {
@@ -273,16 +295,24 @@ const DonateBloodPage = () => {
     if (!validate()) return;
     try {
       // Get country name from selected country ID
-      const selectedCountry = countries.find(country => country.id === formData.country);
-      const countryName = selectedCountry ? selectedCountry.name : formData.country;
-      
+      const selectedCountry = countries.find(
+        (country) => country.id === formData.country
+      );
+      const countryName = selectedCountry
+        ? selectedCountry.name
+        : formData.country;
+
       // Get state name from selected state ID
-      const selectedState = states.find(state => state.id === formData.state);
+      const selectedState = states.find((state) => state.id === formData.state);
       const stateName = selectedState ? selectedState.name : formData.state;
-      
+
       // Get district name from selected district ID
-      const selectedDistrict = districts.find(district => district.id === formData.district);
-      const districtName = selectedDistrict ? selectedDistrict.name : formData.district;
+      const selectedDistrict = districts.find(
+        (district) => district.id === formData.district
+      );
+      const districtName = selectedDistrict
+        ? selectedDistrict.name
+        : formData.district;
 
       const payload = {
         phone: formData.phone.startsWith("0")
@@ -290,12 +320,12 @@ const DonateBloodPage = () => {
           : formData.phone,
         dateOfBirth: formData.dateOfBirth,
         bloodGroup: formData.bloodGroup,
-        address: { 
-          place: formData.place, 
+        address: {
+          place: formData.place,
           pincode: Number(formData.pincode),
           country: countryName,
           state: stateName,
-          district: districtName
+          district: districtName,
         },
         userId: user?._id,
       };
@@ -359,7 +389,11 @@ const DonateBloodPage = () => {
             onClick={() => setShowBloodGroupModal(true)}
           >
             <Droplet size={18} className="text-emerald-600 mr-2" />
-            <span className={`flex-1 text-left ${!formData.bloodGroup ? 'text-emerald-400' : 'text-emerald-800'}`}>
+            <span
+              className={`flex-1 text-left ${
+                !formData.bloodGroup ? "text-emerald-400" : "text-emerald-800"
+              }`}
+            >
               {formData.bloodGroup || "Select Blood Group"}
             </span>
           </button>
@@ -375,7 +409,11 @@ const DonateBloodPage = () => {
             onClick={() => setShowCountryModal(true)}
           >
             <MapPin size={18} className="text-emerald-600 mr-2" />
-            <span className={`flex-1 text-left ${!formData.country ? 'text-emerald-400' : 'text-emerald-800'}`}>
+            <span
+              className={`flex-1 text-left ${
+                !formData.country ? "text-emerald-400" : "text-emerald-800"
+              }`}
+            >
               {getDisplayName(countries, formData.country, "Select Country")}
             </span>
           </button>
@@ -392,7 +430,11 @@ const DonateBloodPage = () => {
               onClick={() => setShowStateModal(true)}
             >
               <MapPin size={18} className="text-emerald-600 mr-2" />
-              <span className={`flex-1 text-left ${!formData.state ? 'text-emerald-400' : 'text-emerald-800'}`}>
+              <span
+                className={`flex-1 text-left ${
+                  !formData.state ? "text-emerald-400" : "text-emerald-800"
+                }`}
+              >
                 {getDisplayName(states, formData.state, "Select State")}
               </span>
             </button>
@@ -410,8 +452,16 @@ const DonateBloodPage = () => {
               onClick={() => setShowDistrictModal(true)}
             >
               <MapPin size={18} className="text-emerald-600 mr-2" />
-              <span className={`flex-1 text-left ${!formData.district ? 'text-emerald-400' : 'text-emerald-800'}`}>
-                {getDisplayName(districts, formData.district, "Select District")}
+              <span
+                className={`flex-1 text-left ${
+                  !formData.district ? "text-emerald-400" : "text-emerald-800"
+                }`}
+              >
+                {getDisplayName(
+                  districts,
+                  formData.district,
+                  "Select District"
+                )}
               </span>
             </button>
             {errors.district && (
