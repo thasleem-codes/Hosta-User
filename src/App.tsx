@@ -7,7 +7,6 @@ import HospitalDetails from "./Pages/HospitalDetailes";
 import DoctorsPage from "./Pages/Doctors";
 import SpecialtiesPage from "./Pages/Specialties";
 import AmbulanceServicesPage from "./Pages/Ambulance-services";
-import DepartmentDoctorsPage from "./Pages/HospitalSpecialtiesDetails";
 import UserRegistration from "./Pages/Registration";
 import UserLogin from "./Pages/Login";
 import PasswordReset from "./Pages/PasswordReset";
