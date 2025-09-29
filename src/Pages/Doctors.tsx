@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Search, X, Calendar, Clock, User, Phone, Mail } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../Redux/Store";
-import { setHospitalData } from "../Redux/HospitalsData";
+import {
+  setHospitalData,
+  Doctor,
+  Hospital,
+  Specialty,
+} from "../Redux/HospitalsData";
 import { apiClient } from "../Components/Axios";
 import { Header } from "../Components/Common";
 import LoadingSpinner from "../Components/LoadingSpinner";
-import { Doctor, Hospital, Specialty } from "../Redux/HospitalsData";
 import { convertTo12HourFormat } from "../Components/HospitalDetailesComponents";
 
 interface DoctorWithHospitalSchedules extends Doctor {
@@ -30,7 +34,11 @@ const getAllDoctorsWithHospitalSchedules = (
       specialty.doctors.forEach((doctor: Doctor) => {
         const key = `${doctor.name}-${specialty.name}`;
         if (!doctorMap.has(key)) {
-          doctorMap.set(key, { ...doctor, specialty: specialty.name, hospitalSchedules: [] });
+          doctorMap.set(key, {
+            ...doctor,
+            specialty: specialty.name,
+            hospitalSchedules: [],
+          });
         }
         const existingDoctor = doctorMap.get(key)!;
         existingDoctor.hospitalSchedules.push({
@@ -49,13 +57,19 @@ const getAllDoctorsWithHospitalSchedules = (
 const DoctorsPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { hospitals = [] } = useSelector((state: RootState) => state.hospitalData);
+  const [searchParams] = useSearchParams();
+  const { hospitals = [] } = useSelector(
+    (state: RootState) => state.hospitalData
+  );
 
   const [doctors, setDoctors] = useState<DoctorWithHospitalSchedules[]>([]);
-  const [filteredDoctors, setFilteredDoctors] = useState<DoctorWithHospitalSchedules[]>([]);
+  const [filteredDoctors, setFilteredDoctors] = useState<
+    DoctorWithHospitalSchedules[]
+  >([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState<DoctorWithHospitalSchedules | null>(null);
+  const [selectedDoctor, setSelectedDoctor] =
+    useState<DoctorWithHospitalSchedules | null>(null);
   const [bookingData, setBookingData] = useState({
     user_name: "",
     mobile: "",
@@ -64,6 +78,10 @@ const DoctorsPage: React.FC = () => {
     booking_time: "",
   });
   const [bookingLoading, setBookingLoading] = useState(false);
+
+  // Query params for filtering
+  const hospitalId = searchParams.get("hospitalId");
+  const specialtyId = searchParams.get("specialtyId");
 
   useEffect(() => {
     const fetchHospitals = async () => {
@@ -84,11 +102,41 @@ const DoctorsPage: React.FC = () => {
 
   useEffect(() => {
     if (hospitals.length > 0) {
-      const allDoctors = getAllDoctorsWithHospitalSchedules(hospitals);
+      let allDoctors: DoctorWithHospitalSchedules[] = [];
+
+      if (hospitalId && specialtyId) {
+        // ✅ Filter by hospital and specialty
+        const hospital = hospitals.find((h) => h._id === hospitalId);
+        const specialty = hospital?.specialties.find(
+          (s) => s._id === specialtyId
+        );
+
+        if (hospital && specialty) {
+          specialty.doctors.forEach((doctor) => {
+            allDoctors.push({
+              ...doctor,
+              specialty: specialty.name,
+              hospitalSchedules: [
+                {
+                  hospitalId: hospital._id!,
+                  hospitalName: hospital.name,
+                  address: hospital.address,
+                  phone: hospital.phone,
+                  consulting: doctor.consulting,
+                },
+              ],
+            });
+          });
+        }
+      } else {
+        // ✅ Show all doctors
+        allDoctors = getAllDoctorsWithHospitalSchedules(hospitals);
+      }
+
       setDoctors(allDoctors);
       setFilteredDoctors(allDoctors);
     }
-  }, [hospitals]);
+  }, [hospitals, hospitalId, specialtyId]);
 
   useEffect(() => {
     if (doctors.length > 0) {
@@ -137,7 +185,20 @@ const DoctorsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-green-50 p-4 md:p-6">
       <div className="max-w-3xl mx-auto">
-        <Header onBackClick={() => navigate(-1)} title="Our Doctors" />
+        <Header onBackClick={() => navigate(-1)} title="Doctors" />
+
+        {hospitalId && specialtyId && (
+          <div className="mb-6 bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-xl shadow-sm text-center">
+            Showing doctors in{" "}
+            <span className="font-semibold">
+              {filteredDoctors[0]?.specialty}
+            </span>
+            at{" "}
+            <span className="font-semibold">
+              {hospitals.find((h) => h._id === hospitalId)?.name}
+            </span>
+          </div>
+        )}
 
         {/* Search */}
         <div className="mb-6 relative">
@@ -154,7 +215,9 @@ const DoctorsPage: React.FC = () => {
         {loading ? (
           <LoadingSpinner />
         ) : filteredDoctors.length === 0 ? (
-          <div className="text-center text-green-700 mt-10">No doctors found.</div>
+          <div className="text-center text-green-700 mt-10">
+            No doctors found.
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filteredDoctors.map((doctor) => (
@@ -166,7 +229,9 @@ const DoctorsPage: React.FC = () => {
                 <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xl font-bold">
                   {doctor.name.charAt(0)}
                 </div>
-                <h3 className="text-lg font-semibold text-green-800 truncate">{doctor.name}</h3>
+                <h3 className="text-lg font-semibold text-green-800 truncate">
+                  {doctor.name}
+                </h3>
                 <p className="text-sm text-green-600">{doctor.specialty}</p>
                 <button
                   className="mt-auto px-4 py-2 bg-green-600 text-white rounded-xl text-sm hover:bg-green-700"
@@ -183,14 +248,13 @@ const DoctorsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Bottom Sheet Modal */}
+      {/* Booking Modal */}
       {selectedDoctor && (
         <div
           className="fixed inset-0 z-50 flex justify-center items-end"
           onClick={() => setSelectedDoctor(null)}
         >
           <div className="absolute inset-0 bg-black bg-opacity-50" />
-
           <div
             className="relative w-full max-w-lg bg-white rounded-t-3xl shadow-lg p-6 max-h-[90vh] overflow-y-auto animate-slideUp z-50"
             onClick={(e) => e.stopPropagation()}
@@ -204,22 +268,29 @@ const DoctorsPage: React.FC = () => {
 
             <div className="flex flex-col items-center text-center mb-4">
               <div className="text-5xl mb-2">👨‍⚕️</div>
-              <h2 className="text-xl font-semibold text-green-800">{selectedDoctor.name}</h2>
+              <h2 className="text-xl font-semibold text-green-800">
+                {selectedDoctor.name}
+              </h2>
               <p className="text-green-600">{selectedDoctor.specialty}</p>
             </div>
 
             {selectedDoctor.hospitalSchedules.map((hs, idx) => (
-              <div key={idx} className="border border-green-200 rounded-xl p-4 shadow-sm mb-4">
+              <div
+                key={idx}
+                className="border border-green-200 rounded-xl p-4 shadow-sm mb-4"
+              >
                 <h3
                   className="text-md font-semibold text-green-700 cursor-pointer hover:underline"
-                  onClick={() => navigate(`/services/hospitals/${hs.hospitalId}`)}
+                  onClick={() =>
+                    navigate(`/services/hospitals/${hs.hospitalId}`)
+                  }
                 >
                   {hs.hospitalName}
                 </h3>
                 <p className="text-sm text-green-600">{hs.address}</p>
                 <p className="text-sm text-green-600 mb-2">📞 {hs.phone}</p>
 
-                {/* Availability Table */}
+                {/* Availability */}
                 <div className="overflow-x-auto mb-3">
                   <table className="w-full text-sm border-collapse">
                     <thead>
@@ -251,7 +322,10 @@ const DoctorsPage: React.FC = () => {
                   }}
                 >
                   <div className="relative">
-                    <User className="absolute left-3 top-3 text-green-500" size={18} />
+                    <User
+                      className="absolute left-3 top-3 text-green-500"
+                      size={18}
+                    />
                     <input
                       type="text"
                       name="user_name"
@@ -263,7 +337,10 @@ const DoctorsPage: React.FC = () => {
                     />
                   </div>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-3 text-green-500" size={18} />
+                    <Phone
+                      className="absolute left-3 top-3 text-green-500"
+                      size={18}
+                    />
                     <input
                       type="tel"
                       name="mobile"
@@ -275,7 +352,10 @@ const DoctorsPage: React.FC = () => {
                     />
                   </div>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 text-green-500" size={18} />
+                    <Mail
+                      className="absolute left-3 top-3 text-green-500"
+                      size={18}
+                    />
                     <input
                       type="email"
                       name="email"
@@ -286,7 +366,10 @@ const DoctorsPage: React.FC = () => {
                     />
                   </div>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-3 text-green-500" size={18} />
+                    <Calendar
+                      className="absolute left-3 top-3 text-green-500"
+                      size={18}
+                    />
                     <input
                       type="date"
                       name="booking_date"
@@ -297,7 +380,10 @@ const DoctorsPage: React.FC = () => {
                     />
                   </div>
                   <div className="relative">
-                    <Clock className="absolute left-3 top-3 text-green-500" size={18} />
+                    <Clock
+                      className="absolute left-3 top-3 text-green-500"
+                      size={18}
+                    />
                     <input
                       type="time"
                       name="booking_time"

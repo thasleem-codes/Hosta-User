@@ -55,12 +55,6 @@ function App() {
       } catch (error) {
         console.error("Failed to fetch ambulances", error);
       }
-      // try {
-      //   const result = await apiClient.get("/api/hospitals");
-      //   dispatch(setHospitalData({ data: result.data.data }));
-      // } catch (error) {
-      //   console.error("Failed to fetch hospitals", error);
-      // }
     };
     init();
   }, []);
@@ -79,10 +73,6 @@ function App() {
           <Route path="hospitals/types" element={<HospitalTypeCards />} />
           <Route path="hospitals" element={<HospitalsPage />} />
           <Route path="hospitals/:id" element={<HospitalDetails />} />
-          <Route
-            path="hospitals/:id/:departmentId"
-            element={<DepartmentDoctorsPage />}
-          />
           <Route path="doctors" element={<DoctorsPage />} />
           <Route path="specialties" element={<SpecialtiesPage />} />
           <Route path="ambulance" element={<AmbulanceServicesPage />} />
