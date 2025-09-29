@@ -72,20 +72,26 @@ export const Info = ({ hospital }: { hospital: Hospital }) => {
 };
 
 // Specialties window
+
 export const Specialties = ({ hospital }: { hospital: Hospital }) => {
   const navigate = useNavigate();
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
       {hospital?.specialties.map((dept, index) => (
         <div
           key={index}
-          className="border border-green-200 rounded-md p-4 hover:bg-green-50 transition-colors"
-          onClick={() => {
-            navigate(`/services/hospitals/${hospital?._id}/${dept._id}`);
-          }}
+          className="border border-green-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md hover:bg-green-50 transition-all cursor-pointer"
+          onClick={() =>
+            navigate(`/services/doctors?hospitalId=${hospital?._id}&specialtyId=${dept._id}`)
+          }
         >
-          <h3 className="text-lg font-medium text-green-700">{dept.name}</h3>
-          <p className="text-green-600">{dept.department_info}</p>
+          <h3 className="text-base sm:text-lg font-semibold text-green-800 mb-1">
+            {dept.name}
+          </h3>
+          <p className="text-sm sm:text-base text-gray-600 line-clamp-2">
+            {dept.department_info}
+          </p>
         </div>
       ))}
     </div>
@@ -124,126 +130,6 @@ export const WorkingHours = ({ hospital }: { hospital: Hospital }) => {
     </div>
   );
 };
-
-// Review window
-// export const ReviewComponent = ({ hospital }: { hospital: Hospital }) => {
-//   const dispatch = useDispatch();
-//   const [newReview, setNewReview] = useState<Review>({
-//     user_name: "",
-//     rating: 0,
-//     comment: "",
-//     date: "",
-//   });
-
-//   const handleReviewSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     await apiClient
-//       .post(`/api/reviews/${hospital._id}`, newReview)
-//       .then((result) => {
-//         dispatch(setHospitalData({ data: result.data.data }));
-//       })
-//       .catch((err) => console.log(err));
-
-//     setNewReview({ user_name: "", rating: 0, comment: "", date: "" });
-//   };
-
-//   return (
-//     <div>
-//       <h3 className="text-xl font-semibold text-green-700 mb-4">Reviews</h3>
-//       <form
-//         onSubmit={handleReviewSubmit}
-//         className="mb-6 bg-green-50 p-4 rounded-lg"
-//       >
-//         <h4 className="text-lg font-medium text-green-700 mb-2">
-//           Write a Review
-//         </h4>
-//         <div className="mb-4">
-//           <label
-//             htmlFor="name"
-//             className="block text-sm font-medium text-green-700 mb-1"
-//           >
-//             Name
-//           </label>
-//           <input
-//             type="text"
-//             id="name"
-//             value={newReview.user_name}
-//             onChange={(e) =>
-//               setNewReview({ ...newReview, user_name: e.target.value })
-//             }
-//             required
-//             className="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-//           />
-//         </div>
-//         <div className="mb-4">
-//           <label className="block text-sm font-medium text-green-700 mb-1">
-//             Rating
-//           </label>
-//           <div className="flex">
-//             {[1, 2, 3, 4, 5].map((star) => (
-//               <Star
-//                 key={star}
-//                 className={`h-6 w-6 cursor-pointer ${
-//                   star <= newReview.rating ? "text-yellow-400" : "text-gray-300"
-//                 }`}
-//                 onClick={() => setNewReview({ ...newReview, rating: star })}
-//               />
-//             ))}
-//           </div>
-//         </div>
-//         <div className="mb-4">
-//           <label
-//             htmlFor="comment"
-//             className="block text-sm font-medium text-green-700 mb-1"
-//           >
-//             Comment
-//           </label>
-//           <textarea
-//             id="comment"
-//             value={newReview.comment}
-//             onChange={(e) =>
-//               setNewReview({ ...newReview, comment: e.target.value })
-//             }
-//             required
-//             rows={3}
-//             className="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-//           ></textarea>
-//         </div>
-//         <button
-//           type="submit"
-//           className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-//         >
-//           Submit Review
-//           <Send className="ml-2 h-4 w-4" />
-//         </button>
-//       </form>
-//       <div className="space-y-4">
-//         {hospital.reviews.map((review) => (
-//           <div key={review._id} className="border-b border-green-100 pb-4">
-//             <div className="flex items-center justify-between mb-2">
-//               <span className="font-medium text-green-700">
-//                 {review.user_name}
-//               </span>
-//               <span className="text-sm text-green-600">{review.date}</span>
-//             </div>
-//             <div className="flex items-center mb-2">
-//               {[1, 2, 3, 4, 5].map((star) => (
-//                 <Star
-//                   key={star}
-//                   className={`h-4 w-4 ${
-//                     star <= review.rating ? "text-yellow-400" : "text-gray-300"
-//                   }`}
-//                 />
-//               ))}
-//             </div>
-//             <p className="text-green-600">{review.comment}</p>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
 
 import { Edit2, ChevronDown, ChevronUp } from "lucide-react";
 import { ReviewButton, Textarea } from "./Common";
