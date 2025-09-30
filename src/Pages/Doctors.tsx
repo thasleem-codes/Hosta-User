@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, X, Calendar, Clock, User, Phone, Mail } from "lucide-react";
+import { Search, X, Calendar, User, Phone, Mail } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../Redux/Store";
@@ -186,7 +186,6 @@ const DoctorsPage: React.FC = () => {
     <div className="min-h-screen bg-green-50 p-4 md:p-6">
       <div className="max-w-3xl mx-auto">
         <Header onBackClick={() => navigate(-1)} title="Doctors" />
-
         {hospitalId && specialtyId && (
           <div className="mb-6 bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-xl shadow-sm text-center">
             Showing doctors in{" "}
@@ -374,20 +373,6 @@ const DoctorsPage: React.FC = () => {
                       type="date"
                       name="booking_date"
                       value={bookingData.booking_date}
-                      onChange={handleBookingChange}
-                      required
-                      className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                  <div className="relative">
-                    <Clock
-                      className="absolute left-3 top-3 text-green-500"
-                      size={18}
-                    />
-                    <input
-                      type="time"
-                      name="booking_time"
-                      value={bookingData.booking_time}
                       onChange={handleBookingChange}
                       required
                       className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"

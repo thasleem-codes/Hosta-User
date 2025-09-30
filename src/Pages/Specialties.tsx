@@ -130,7 +130,7 @@ const SpecialtiesPage: React.FC = () => {
     setFilteredSpecialties(filtered);
   }, [hospitals, searchTerm]);
 
-  const navigateToHospital = (hospitalId: string) => navigate(`/services/hospitals/${hospitalId}`);
+  const navigateToHospital = (hospitalId: string,dept:string) => navigate(`/services/doctors?hospitalId=${hospitalId}&specialtyId=${dept}`);
 
   return (
     <div className="min-h-screen bg-green-50 p-4 md:p-6">
@@ -188,7 +188,7 @@ const SpecialtiesPage: React.FC = () => {
                 <div
                   key={hospital.id}
                   className="border border-green-200 rounded-xl p-4 hover:bg-green-50 cursor-pointer transition-colors"
-                  onClick={() => navigateToHospital(hospital.id)}
+                  onClick={() => navigateToHospital(hospital.id,selectedSpecialty?.id as string)}
                 >
                   <h4 className="text-md font-medium text-green-800 truncate">{hospital.name}</h4>
                   <div className="flex items-center text-sm text-green-700 mt-1">

@@ -21,21 +21,12 @@ const features = [
   { name: "Blood", icon: Droplet,  href:  "/services/blood-request" },
 ];
 
-// const features = [
-//   { name: "Hospitals", icon: Hospital, href: "/services/hospitals/types" },
-//   { name: "Doctors", icon: UserRound, href: "/services/doctors" },
-//   { name: "Specialties", icon: Building2, href: "/services/specialties" },
-//   { name: "Ambulance", icon: Ambulance, href: "/services/ambulance" },
-//   { name: "Donate Blood", icon: Droplet, href: "/services/blood-donation" },
-//   { name: "Find Blood", icon: Search, href: "/services/blood-request" },
-// ];
-
 
 const adImages = [
-  "https://img.freepik.com/free-vector/flat-design-medical-facebook-ad_23-2149091913.jpg",
-  "https://img.freepik.com/free-vector/flat-design-medical-facebook-ad_23-2149091912.jpg",
-  "https://mangalprabhu.com/wp-content/uploads/2024/03/Pregnancy-Offer.jpg",
-  "https://dcassetcdn.com/design_img/3242090/43775/43775_17860005_3242090_1b999885_image.jpg",
+  "https://res.cloudinary.com/dupevol0e/image/upload/v1759230219/Hosta1_kuzzwl.jpg",
+  "https://res.cloudinary.com/dupevol0e/image/upload/v1759230007/alabeer_y1h4wc.jpg",
+  "https://res.cloudinary.com/dupevol0e/image/upload/v1759230008/hosta_2_shkdve.png",
+  
 ];
 
 export default function HomePage() {
