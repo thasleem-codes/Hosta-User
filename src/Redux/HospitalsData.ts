@@ -24,11 +24,16 @@ export interface Specialty {
 
 export interface Review {
   _id?: string;
-  user_id: string;
+  user_id: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   rating: number;
   comment: string;
   date: string;
 }
+
 
 export interface WorkingHours {
   day: string;
