@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,13 +64,32 @@ const MobileMenu = ({
   );
 };
 
-export default function Navbar() {
+interface NavbarProps {
+  onHeightChange?: (height: number) => void;
+}
+
+export default function Navbar({ onHeightChange }: NavbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
 
   const user = useSelector((state: any) => state.userLogin);
+
+  const navbarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (navbarRef.current && onHeightChange) {
+      const handleResize = () => {
+        onHeightChange(navbarRef.current!.offsetHeight);
+      };
+
+      handleResize(); // initial height
+      window.addEventListener("resize", handleResize);
+
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, [onHeightChange]);
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -93,7 +112,10 @@ export default function Navbar() {
   const getInitial = (name: string) => name?.charAt(0)?.toUpperCase() || "";
 
   return (
-    <nav className="bg-green-600 px-4 py-3 flex justify-between items-center sticky top-0 z-40 shadow">
+    <nav
+      ref={navbarRef}
+      className="bg-green-600 px-4 py-3 flex justify-between items-center sticky top-0 z-40 shadow"
+    >
       {/* Logo */}
       <h1
         className="text-white font-bold text-lg cursor-pointer"

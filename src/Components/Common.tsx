@@ -51,11 +51,15 @@ const BackButton: React.FC<BackButtonProps> = ({ onClick }) => {
 interface HeaderProps {
   title: string;
   onBackClick: () => void;
+  navbarHeight?: number; // dynamic top offset
 }
 
-export function Header({ title, onBackClick }: HeaderProps) {
+export function Header({ title, onBackClick, navbarHeight = 0 }: HeaderProps) {
   return (
-    <div className=" sticky mb-6 px-4 py-3 top-20 left-0 right-0 bg-green-50 z-40 rounded-sm">
+    <div
+      className="sticky z-30 px-4 py-3 bg-green-50 mb-6"
+      style={{ top: navbarHeight }}
+    >
       <div className="flex items-center justify-between">
         <BackButton onClick={onBackClick} />
         <h1 className="text-2xl md:text-3xl font-bold text-green-800 text-center flex-grow">
@@ -66,30 +70,6 @@ export function Header({ title, onBackClick }: HeaderProps) {
     </div>
   );
 }
-
-// interface HeaderProps {
-//   title: string;
-//   onBackClick: () => void;
-// }
-
-// export function Header({ title, onBackClick }: HeaderProps) {
-//   return (
-//     <header className="sticky top-[56px] sm:top-[64px] z-40 bg-white border-b border-green-100 shadow-sm">
-//       <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3">
-//         {/* Back button always visible */}
-//         <BackButton onClick={onBackClick} />
-
-//         {/* Title */}
-//         <h1 className="flex-grow text-lg sm:text-2xl font-bold text-green-800 text-center truncate px-2">
-//           {title}
-//         </h1>
-
-//         {/* Spacer to balance BackButton */}
-//         <div className="w-8 sm:w-10" aria-hidden="true"></div>
-//       </div>
-//     </header>
-//   );
-// }
 
 // Text Area And Button for Uere Review Component
 import { TextareaHTMLAttributes, forwardRef } from "react";
