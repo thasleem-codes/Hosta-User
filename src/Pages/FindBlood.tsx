@@ -144,6 +144,8 @@ const FindBloodPage: React.FC = () => {
   const [currentModalLevel, setCurrentModalLevel] = useState<'country' | 'state' | 'district' | 'place'>('country');
   const [locationHierarchy, setLocationHierarchy] = useState<LocationHierarchy[]>([]);
 
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
   const donorsWithId: IBloodDonor[] = (donors ?? []).map((d, index) => ({
     ...d,
     id: d.id || String(index),

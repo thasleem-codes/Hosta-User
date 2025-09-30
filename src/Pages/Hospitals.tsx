@@ -26,6 +26,8 @@ const HospitalsPage = () => {
   const [loading, setLoading] = useState(true);
   const [locationLoading, setLocationLoading] = useState(false);
 
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -160,13 +162,13 @@ const HospitalsPage = () => {
 
   return (
     <div className="min-h-screen bg-green-50">
-      <Navbar />
+      <Navbar onHeightChange={(height) => setNavbarHeight(height)} />
+      <Header
+        onBackClick={() => navigate("/services/hospitals/types")}
+        title="Hospitals"
+        navbarHeight={navbarHeight}
+      />
       <main className="container mx-auto px-4 py-6">
-        <Header
-          onBackClick={() => navigate("/services/hospitals/types")}
-          title="Hospitals"
-        />
-
         {/* Filters */}
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:gap-1 gap-2">
           <div className="relative flex-grow">
