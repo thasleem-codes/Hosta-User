@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Phone, Search, MapPin, ChevronDown } from "lucide-react";
@@ -21,11 +20,11 @@ export interface IBloodDonor {
   phone: string;
   dateOfBirth: string;
   bloodGroup: "O+" | "O-" | "AB+" | "AB-" | "A+" | "A-" | "B+" | "B-";
-  address: { 
-    place: string; 
-    pincode: number; 
-    state: string; 
-    country: string; 
+  address: {
+    place: string;
+    pincode: number;
+    state: string;
+    country: string;
     district: string;
   };
   lastDonationDate?: string | null;
@@ -33,7 +32,15 @@ export interface IBloodDonor {
 }
 
 const bloodGroups: (IBloodDonor["bloodGroup"] | "All")[] = [
-  "All", "O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-",
+  "All",
+  "O+",
+  "O-",
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
 ];
 
 // Location hierarchy type
@@ -57,7 +64,8 @@ const calculateAge = (dob: string) => {
   return age;
 };
 
-const getInitial = (name: string) => (name?.trim()?.charAt(0) || "?").toUpperCase();
+const getInitial = (name: string) =>
+  (name?.trim()?.charAt(0) || "?").toUpperCase();
 
 // Location Modal Component
 const LocationModal = ({
@@ -82,8 +90,18 @@ const LocationModal = ({
                 onClick={onBack}
                 className="mr-2 text-emerald-600 hover:text-emerald-800"
               >
-                <svg className="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-5 h-5 transform rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </button>
             )}
@@ -96,23 +114,33 @@ const LocationModal = ({
             ×
           </button>
         </div>
-        
+
         <div className="max-h-64 overflow-y-auto">
           {data.map((item: string) => (
             <button
               key={item}
               className={`w-full text-left p-3 hover:bg-emerald-50 transition-colors border-b border-gray-100 ${
-                selectedValue === item ? "bg-emerald-50 border-r-4 border-emerald-600" : ""
+                selectedValue === item
+                  ? "bg-emerald-50 border-r-4 border-emerald-600"
+                  : ""
               }`}
               onClick={() => onSelect(item)}
             >
               <div className="flex justify-between items-center">
-                <span className="text-emerald-800">
-                  {item}
-                </span>
+                <span className="text-emerald-800">{item}</span>
                 {item !== "All" && (
-                  <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    className="w-4 h-4 text-emerald-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 )}
               </div>
@@ -126,23 +154,33 @@ const LocationModal = ({
 
 const FindBloodPage: React.FC = () => {
   const dispatch = useDispatch();
-  const donors = useSelector((state: RootState) => state.bloodData) as IBloodDonor[];
+  const donors = useSelector(
+    (state: RootState) => state.bloodData
+  ) as IBloodDonor[];
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState<IBloodDonor["bloodGroup"] | "All">("All");
+  const [selectedGroup, setSelectedGroup] = useState<
+    IBloodDonor["bloodGroup"] | "All"
+  >("All");
   const [selectedLocation, setSelectedLocation] = useState({
     country: "All",
     state: "All",
     district: "All",
-    place: "All"
+    place: "All",
   });
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [donor, setDonor] = useState<any>(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const [currentModalLevel, setCurrentModalLevel] = useState<'country' | 'state' | 'district' | 'place'>('country');
-  const [locationHierarchy, setLocationHierarchy] = useState<LocationHierarchy[]>([]);
+  const [currentModalLevel, setCurrentModalLevel] = useState<
+    "country" | "state" | "district" | "place"
+  >("country");
+  const [locationHierarchy, setLocationHierarchy] = useState<
+    LocationHierarchy[]
+  >([]);
+
+  const [navbarHeight, setNavbarHeight] = useState(0);
 
   const donorsWithId: IBloodDonor[] = (donors ?? []).map((d, index) => ({
     ...d,
@@ -225,9 +263,9 @@ const FindBloodPage: React.FC = () => {
     if (donors.length > 0) {
       const hierarchy: { [key: string]: any } = {};
 
-      donors.forEach(donor => {
+      donors.forEach((donor) => {
         const { country, state, district, place } = donor.address;
-        
+
         if (!hierarchy[country]) {
           hierarchy[country] = {};
         }
@@ -241,15 +279,19 @@ const FindBloodPage: React.FC = () => {
       });
 
       // Convert to LocationHierarchy format
-      const formattedHierarchy: LocationHierarchy[] = Object.entries(hierarchy).map(([country, states]) => ({
+      const formattedHierarchy: LocationHierarchy[] = Object.entries(
+        hierarchy
+      ).map(([country, states]) => ({
         country,
         states: Object.entries(states).map(([state, districts]) => ({
           state,
-          districts: Object.entries(districts as any).map(([district, places]) => ({
-            district,
-            places: Array.from(places as Set<string>)
-          }))
-        }))
+          districts: Object.entries(districts as any).map(
+            ([district, places]) => ({
+              district,
+              places: Array.from(places as Set<string>),
+            })
+          ),
+        })),
       }));
 
       setLocationHierarchy(formattedHierarchy);
@@ -276,13 +318,18 @@ const FindBloodPage: React.FC = () => {
         d.address?.district?.toLowerCase()?.includes(q) ||
         d.address?.place?.toLowerCase()?.includes(q);
 
-      const matchesGroup = selectedGroup === "All" || d.bloodGroup === selectedGroup;
+      const matchesGroup =
+        selectedGroup === "All" || d.bloodGroup === selectedGroup;
 
       const matchesLocation =
-        (selectedLocation.country === "All" || d.address.country === selectedLocation.country) &&
-        (selectedLocation.state === "All" || d.address.state === selectedLocation.state) &&
-        (selectedLocation.district === "All" || d.address.district === selectedLocation.district) &&
-        (selectedLocation.place === "All" || d.address.place === selectedLocation.place);
+        (selectedLocation.country === "All" ||
+          d.address.country === selectedLocation.country) &&
+        (selectedLocation.state === "All" ||
+          d.address.state === selectedLocation.state) &&
+        (selectedLocation.district === "All" ||
+          d.address.district === selectedLocation.district) &&
+        (selectedLocation.place === "All" ||
+          d.address.place === selectedLocation.place);
 
       return matchesSearch && matchesGroup && matchesLocation;
     });
@@ -291,7 +338,7 @@ const FindBloodPage: React.FC = () => {
   // Location filtering functions
   const getLocationButtonText = () => {
     const { country, state, district, place } = selectedLocation;
-    
+
     if (place !== "All") return place;
     if (district !== "All") return district;
     if (state !== "All") return state;
@@ -299,10 +346,13 @@ const FindBloodPage: React.FC = () => {
     return "All Locations";
   };
 
-  const handleLocationSelect = (level: 'country' | 'state' | 'district' | 'place', value: string) => {
+  const handleLocationSelect = (
+    level: "country" | "state" | "district" | "place",
+    value: string
+  ) => {
     const newLocation = { ...selectedLocation };
-    
-    if (level === 'country') {
+
+    if (level === "country") {
       newLocation.country = value;
       newLocation.state = "All";
       newLocation.district = "All";
@@ -312,8 +362,8 @@ const FindBloodPage: React.FC = () => {
         setShowLocationModal(false);
         return;
       }
-      setCurrentModalLevel('state');
-    } else if (level === 'state') {
+      setCurrentModalLevel("state");
+    } else if (level === "state") {
       newLocation.state = value;
       newLocation.district = "All";
       newLocation.place = "All";
@@ -322,8 +372,8 @@ const FindBloodPage: React.FC = () => {
         setShowLocationModal(false);
         return;
       }
-      setCurrentModalLevel('district');
-    } else if (level === 'district') {
+      setCurrentModalLevel("district");
+    } else if (level === "district") {
       newLocation.district = value;
       newLocation.place = "All";
       if (value === "All") {
@@ -331,14 +381,14 @@ const FindBloodPage: React.FC = () => {
         setShowLocationModal(false);
         return;
       }
-      setCurrentModalLevel('place');
-    } else if (level === 'place') {
+      setCurrentModalLevel("place");
+    } else if (level === "place") {
       newLocation.place = value;
       setSelectedLocation(newLocation);
       setShowLocationModal(false);
       return;
     }
-    
+
     setSelectedLocation(newLocation);
   };
 
@@ -347,33 +397,45 @@ const FindBloodPage: React.FC = () => {
       country: "All",
       state: "All",
       district: "All",
-      place: "All"
+      place: "All",
     });
   };
 
   const getCurrentLevelData = () => {
     const { country, state, district } = selectedLocation;
-    
-    if (currentModalLevel === 'country') {
-      const countries = ["All", ...locationHierarchy.map(loc => loc.country)];
+
+    if (currentModalLevel === "country") {
+      const countries = ["All", ...locationHierarchy.map((loc) => loc.country)];
       return countries;
-    } else if (currentModalLevel === 'state' && country !== "All") {
-      const countryData = locationHierarchy.find(loc => loc.country === country);
-      const states = countryData ? ["All", ...countryData.states.map(s => s.state)] : ["All"];
+    } else if (currentModalLevel === "state" && country !== "All") {
+      const countryData = locationHierarchy.find(
+        (loc) => loc.country === country
+      );
+      const states = countryData
+        ? ["All", ...countryData.states.map((s) => s.state)]
+        : ["All"];
       return states;
-    } else if (currentModalLevel === 'district' && state !== "All") {
-      const countryData = locationHierarchy.find(loc => loc.country === country);
-      const stateData = countryData?.states.find(s => s.state === state);
-      const districts = stateData ? ["All", ...stateData.districts.map(d => d.district)] : ["All"];
+    } else if (currentModalLevel === "district" && state !== "All") {
+      const countryData = locationHierarchy.find(
+        (loc) => loc.country === country
+      );
+      const stateData = countryData?.states.find((s) => s.state === state);
+      const districts = stateData
+        ? ["All", ...stateData.districts.map((d) => d.district)]
+        : ["All"];
       return districts;
-    } else if (currentModalLevel === 'place' && district !== "All") {
-      const countryData = locationHierarchy.find(loc => loc.country === country);
-      const stateData = countryData?.states.find(s => s.state === state);
-      const districtData = stateData?.districts.find(d => d.district === district);
+    } else if (currentModalLevel === "place" && district !== "All") {
+      const countryData = locationHierarchy.find(
+        (loc) => loc.country === country
+      );
+      const stateData = countryData?.states.find((s) => s.state === state);
+      const districtData = stateData?.districts.find(
+        (d) => d.district === district
+      );
       const places = districtData ? ["All", ...districtData.places] : ["All"];
       return places;
     }
-    
+
     return ["All"];
   };
 
@@ -382,18 +444,19 @@ const FindBloodPage: React.FC = () => {
     const titles = {
       country: "Select Country",
       state: country !== "All" ? `Select State (${country})` : "Select State",
-      district: state !== "All" ? `Select District (${state})` : "Select District",
-      place: district !== "All" ? `Select Place (${district})` : "Select Place"
+      district:
+        state !== "All" ? `Select District (${state})` : "Select District",
+      place: district !== "All" ? `Select Place (${district})` : "Select Place",
     };
     return titles[currentModalLevel];
   };
 
-  const canGoBack = currentModalLevel !== 'country';
+  const canGoBack = currentModalLevel !== "country";
 
   const goBack = () => {
-    if (currentModalLevel === 'state') setCurrentModalLevel('country');
-    else if (currentModalLevel === 'district') setCurrentModalLevel('state');
-    else if (currentModalLevel === 'place') setCurrentModalLevel('district');
+    if (currentModalLevel === "state") setCurrentModalLevel("country");
+    else if (currentModalLevel === "district") setCurrentModalLevel("state");
+    else if (currentModalLevel === "place") setCurrentModalLevel("district");
   };
 
   if (loading) {
@@ -406,8 +469,12 @@ const FindBloodPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50 flex flex-col">
-      <Navbar />
-      <Header onBackClick={() => navigate("/")} title="Blood Services" />
+      <Navbar onHeightChange={(height) => setNavbarHeight(height)} />
+      <Header
+        onBackClick={() => navigate("/services/hospitals/types")}
+        title="Hospitals"
+        navbarHeight={navbarHeight}
+      />
 
       {/* Search Bar */}
       <div className="flex items-center bg-white rounded-full mx-4 mt-4 px-4 py-2 mb-3">
@@ -434,7 +501,7 @@ const FindBloodPage: React.FC = () => {
         <button
           onClick={() => {
             setShowLocationModal(true);
-            setCurrentModalLevel('country');
+            setCurrentModalLevel("country");
           }}
           className="flex items-center bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-700 flex-1 mr-2"
         >
@@ -442,9 +509,11 @@ const FindBloodPage: React.FC = () => {
           <span className="flex-1 text-center">{getLocationButtonText()}</span>
           <ChevronDown size={14} className="ml-1" />
         </button>
-        
-        {(selectedLocation.country !== "All" || selectedLocation.state !== "All" || 
-          selectedLocation.district !== "All" || selectedLocation.place !== "All") && (
+
+        {(selectedLocation.country !== "All" ||
+          selectedLocation.state !== "All" ||
+          selectedLocation.district !== "All" ||
+          selectedLocation.place !== "All") && (
           <button
             onClick={resetLocationFilter}
             className="bg-red-500 text-white px-3 py-2 rounded-full text-sm font-semibold hover:bg-red-600"
@@ -461,9 +530,10 @@ const FindBloodPage: React.FC = () => {
             key={g}
             onClick={() => setSelectedGroup(g)}
             className={`flex-shrink-0 w-14 h-14 rounded-full border font-bold text-sm
-            ${selectedGroup === g
-              ? "bg-emerald-700 text-white border-emerald-700"
-              : "bg-emerald-100 text-emerald-700 border-emerald-500"
+            ${
+              selectedGroup === g
+                ? "bg-emerald-700 text-white border-emerald-700"
+                : "bg-emerald-100 text-emerald-700 border-emerald-500"
             }`}
           >
             {g}
@@ -478,7 +548,10 @@ const FindBloodPage: React.FC = () => {
         )}
 
         {filteredDonors.map((item) => (
-          <div key={item.id} className="bg-white rounded-xl p-4 shadow flex items-center">
+          <div
+            key={item.id}
+            className="bg-white rounded-xl p-4 shadow flex items-center"
+          >
             {item.profileImage ? (
               <img
                 src={item.profileImage}
@@ -503,7 +576,8 @@ const FindBloodPage: React.FC = () => {
 
               <p className="text-gray-600 text-sm mt-1">
                 <MapPin size={12} className="inline mr-1" />
-                {item.address.place}, {item.address.district}, {item.address.state}, {item.address.country}
+                {item.address.place}, {item.address.district},{" "}
+                {item.address.state}, {item.address.country}
               </p>
 
               <button
@@ -524,7 +598,9 @@ const FindBloodPage: React.FC = () => {
         onClose={() => setShowLocationModal(false)}
         title={getModalTitle()}
         data={getCurrentLevelData()}
-        onSelect={(value: string) => handleLocationSelect(currentModalLevel, value)}
+        onSelect={(value: string) =>
+          handleLocationSelect(currentModalLevel, value)
+        }
         onBack={goBack}
         canGoBack={canGoBack}
         selectedValue={selectedLocation[currentModalLevel]}
