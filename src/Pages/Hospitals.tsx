@@ -168,7 +168,7 @@ const HospitalsPage = () => {
         />
 
         {/* Filters */}
-        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:gap-1 gap-2">
           <div className="relative flex-grow">
             <FormInput
               type="text"
@@ -194,21 +194,49 @@ const HospitalsPage = () => {
           </div>
 
           <div className="flex flex-col">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="sortDistance"
-                className="mr-2"
-                checked={sortByDistance}
-                onChange={(e) => setSortByDistance(e.target.checked)}
-                disabled={locationLoading || !latitude || !longitude}
-              />
-              <label
-                htmlFor="sortDistance"
-                className="text-green-700 font-medium"
+            <div className="flex items-center gap-3">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="sortDistance"
+                  className="mr-2"
+                  checked={sortByDistance}
+                  onChange={(e) => setSortByDistance(e.target.checked)}
+                  disabled={locationLoading || !latitude || !longitude}
+                />
+                <label
+                  htmlFor="sortDistance"
+                  className="text-green-700 font-medium"
+                >
+                  Sort by Nearest
+                </label>
+              </div>
+
+              {/* Refresh Location Button */}
+              <button
+                type="button"
+                className="ml-2 px-3 py-1 bg-green-200 text-green-800 rounded-lg text-sm hover:bg-green-300 transition"
+                onClick={async () => {
+                  setLocationLoading(true);
+                  try {
+                    const [lat, lon] = await getCurrentLocation();
+                    dispatch(
+                      updateUserData({
+                        ...userData,
+                        latitude: lat,
+                        longitude: lon,
+                      })
+                    );
+                  } catch (err) {
+                    console.error("Failed to refresh location", err);
+                  } finally {
+                    setLocationLoading(false);
+                  }
+                }}
+                disabled={locationLoading}
               >
-                Sort by Nearest
-              </label>
+                {locationLoading ? "Refreshing..." : "Refresh Location"}
+              </button>
             </div>
 
             {(locationLoading || !latitude || !longitude) && (
