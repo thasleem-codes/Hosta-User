@@ -1,101 +1,87 @@
 import React, { useState } from "react";
-import "leaflet/dist/leaflet.css";
-import Map from "../Components/Map";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../Redux/Store";
+// import { Hospital } from "../Redux/HospitalsData";
 import {
-  Button,
   Info,
-  ReviewComponent,
   Specialties,
   WorkingHours,
+  ReviewComponent,
 } from "../Components/HospitalDetailesComponents";
-import { RootState } from "../Redux/Store";
-import { Hospital } from "../Redux/HospitalsData";
-import { useSelector } from "react-redux";
+import Map from "../Components/Map";
 import { ArrowLeft } from "lucide-react";
 
 const HospitalDetails: React.FC = () => {
   const { id } = useParams();
-
-  const [activeTab, setActiveTab] = useState("info");
   const navigate = useNavigate();
   const { hospitals } = useSelector((state: RootState) => state.hospitalData);
 
-  const hospital = hospitals.find((hospital) => hospital._id === id);
+  const [activeTab, setActiveTab] = useState("info");
+  const hospital = hospitals.find((h) => h._id === id);
+
+  if (!hospital) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-green-600 font-semibold">
+        Hospital not found
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-green-50 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="relative h-64 md:h-96">
-          <img
-            src={hospital?.image?.imageUrl || ""}
-            alt={hospital?.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-          <h1 className="absolute bottom-4 left-4 text-3xl md:text-4xl font-bold text-white">
-            {hospital?.name}
-          </h1>
-          <button
-            onClick={() =>
-              navigate(`/services/hospitals?type=${hospital?.type}`)
-            }
-            className="absolute top-4 left-4 bg-white bg-opacity-75 p-2 rounded-full hover:bg-opacity-100 transition-all duration-200"
-          >
-            <ArrowLeft className="h-6 w-6 text-green-600" />
-          </button>
-          
+    <div className="min-h-screen bg-green-50">
+      {/* Hospital Image */}
+      <div className="relative w-full h-64 sm:h-96">
+        <img
+          src={hospital.image?.imageUrl || ""}
+          alt={hospital.name}
+          className="w-full h-full object-contain bg-green-100"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <h1 className="absolute bottom-4 left-4 text-xl sm:text-3xl md:text-4xl font-bold text-white">
+          {hospital.name}
+        </h1>
+        <button
+          onClick={() =>
+            navigate(`/services/hospitals?type=${hospital.type}`)
+          }
+          className="absolute top-4 left-4 bg-white bg-opacity-75 p-2 rounded-full hover:bg-opacity-100 transition-all"
+        >
+          <ArrowLeft className="h-6 w-6 text-green-600" />
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="max-w-4xl mx-auto p-4 sm:p-6">
+        <div className="flex overflow-x-auto mb-4 border-b border-green-200">
+          {[
+            { label: "Information", key: "info" },
+            { label: "Specialties", key: "specialties" },
+            { label: "Hours", key: "hours" },
+            { label: "Location", key: "location" },
+            { label: "Reviews", key: "reviews" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`whitespace-nowrap px-4 py-2 font-medium ${
+                activeTab === tab.key
+                  ? "border-b-2 border-green-600 text-green-800"
+                  : "text-green-600 hover:text-green-800"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className="p-6">
-          <div className="flex mb-6 border-b border-green-200 overflow-x-auto">
-            <Button
-              activeTab={activeTab}
-              content="Information"
-              purpose="info"
-              OnClick={() => setActiveTab("info")}
-            />
-            <Button
-              activeTab={activeTab}
-              content="Specialties"
-              purpose="specialties"
-              OnClick={() => setActiveTab("specialties")}
-            />
-            <Button
-              activeTab={activeTab}
-              purpose="hours"
-              content="Hours"
-              OnClick={() => setActiveTab("hours")}
-            />
-            <Button
-              activeTab={activeTab}
-              purpose="location"
-              content="Location"
-              OnClick={() => setActiveTab("location")}
-            />
-            <Button
-              activeTab={activeTab}
-              purpose="reviews"
-              content="Reviews"
-              OnClick={() => setActiveTab("reviews")}
-            />
-          </div>
-
-          {activeTab === "info" && <Info hospital={hospital as Hospital} />}
-
-          {activeTab === "specialties" && (
-            <Specialties hospital={hospital as Hospital} />
-          )}
-
-          {activeTab === "hours" && (
-            <WorkingHours hospital={hospital as Hospital} />
-          )}
-
-          {activeTab === "location" && <Map hospital={hospital as Hospital} />}
-
-          {activeTab === "reviews" && (
-            <ReviewComponent hospital={hospital as Hospital} />
-          )}
+        {/* Tab Content */}
+        <div className="mt-4">
+          {activeTab === "info" && <Info hospital={hospital} />}
+          {activeTab === "specialties" && <Specialties hospital={hospital} />}
+          {activeTab === "hours" && <WorkingHours hospital={hospital} />}
+          {activeTab === "location" && <Map hospital={hospital} />}
+          {activeTab === "reviews" && <ReviewComponent hospital={hospital} />}
         </div>
       </div>
     </div>
