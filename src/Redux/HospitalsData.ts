@@ -1,16 +1,50 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface ConsultingSchedule {
-  day: string;
+// export interface ConsultingSchedule {
+//   day: string;
+//   start_time: string;
+//   end_time: string;
+// }
+
+// export interface Doctor {
+//   _id?: string;
+//   name: string;
+//   consulting: ConsultingSchedule[];
+//   qualification: string;
+// }
+
+// Each session inside a day
+export interface Session {
   start_time: string;
   end_time: string;
+  _id?: string;
 }
 
+// Each day with multiple sessions
+export interface ConsultingDay {
+  day: string;
+  sessions: Session[];
+  _id?: string;
+}
+
+// Doctor structure
 export interface Doctor {
   _id?: string;
   name: string;
-  consulting: ConsultingSchedule[];
   qualification: string;
+  consulting: ConsultingDay[]; // 👈 updated here
+}
+
+// Doctor with hospital schedules
+export interface DoctorWithHospitalSchedules extends Doctor {
+  specialty: string;
+  hospitalSchedules: {
+    hospitalId: string;
+    hospitalName: string;
+    address: string;
+    phone: string;
+    consulting: ConsultingDay[]; // 👈 updated here
+  }[];
 }
 
 export interface Specialty {
@@ -33,7 +67,6 @@ export interface Review {
   comment: string;
   date: string;
 }
-
 
 export interface WorkingHours {
   day: string;
@@ -100,13 +133,14 @@ const hospitalSlice = createSlice({
     },
 
     // Add or update consulting schedule for a doctor
+    // Update doctor consulting (replace full consulting schedule)
     updateDoctorConsulting: (
       state,
       action: PayloadAction<{
         hospitalId: string;
         specialtyId: string;
         doctorId: string;
-        consulting: ConsultingSchedule[];
+        consulting: ConsultingDay[]; // 👈 changed
       }>
     ) => {
       const { hospitalId, specialtyId, doctorId, consulting } = action.payload;
@@ -122,14 +156,14 @@ const hospitalSlice = createSlice({
       doctor.consulting = consulting;
     },
 
-    // Add a new schedule to a doctor
+    // Add a new day (with sessions)
     addConsultingSchedule: (
       state,
       action: PayloadAction<{
         hospitalId: string;
         specialtyId: string;
         doctorId: string;
-        schedule: ConsultingSchedule;
+        schedule: ConsultingDay; // 👈 changed
       }>
     ) => {
       const { hospitalId, specialtyId, doctorId, schedule } = action.payload;
