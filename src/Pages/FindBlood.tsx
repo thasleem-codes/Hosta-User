@@ -471,8 +471,8 @@ const FindBloodPage: React.FC = () => {
     <div className="min-h-screen bg-emerald-50 flex flex-col">
       <Navbar onHeightChange={(height) => setNavbarHeight(height)} />
       <Header
-        onBackClick={() => navigate("/services/hospitals/types")}
-        title="Hospitals"
+        onBackClick={() => navigate("/")}
+        title="Find Blood Donor"
         navbarHeight={navbarHeight}
       />
 

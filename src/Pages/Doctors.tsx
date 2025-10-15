@@ -14,6 +14,7 @@ import { apiClient } from "../Components/Axios";
 import { Header } from "../Components/Common";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import { convertTo12HourFormat } from "../Components/HospitalDetailesComponents";
+import { successToast } from "../Components/Toastify";
 
 // Doctor with hospital schedules
 export interface DoctorWithHospitalSchedules extends Doctor {
@@ -72,13 +73,13 @@ const DoctorsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] =
     useState<DoctorWithHospitalSchedules | null>(null);
-  // const [bookingData, setBookingData] = useState({
-  //   user_name: "",
-  //   mobile: "",
-  //   email: "",
-  //   booking_date: "",
-  //   booking_time: "",
-  // });
+  const [bookingData, setBookingData] = useState({
+    user_name: "",
+    mobile: "",
+    email: "",
+    booking_date: "",
+  });
+
   const [bookingLoading, setBookingLoading] = useState(false);
 
   // Query params for filtering
@@ -152,44 +153,52 @@ const DoctorsPage: React.FC = () => {
   }, [searchTerm, doctors]);
 
   // Booking handlers
-  // const handleBookingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setBookingData({ ...bookingData, [e.target.name]: e.target.value });
-  // };
+  const handleBookingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBookingData({ ...bookingData, [e.target.name]: e.target.value });
+  };
 
-  // const handleBookingSubmit = async (
-  //   doctor: DoctorWithHospitalSchedules,
-  //   hospitalId: string
-  // ) => {
-  //   setBookingLoading(true);
-  //   try {
-  //     await apiClient.post("/api/appointments", {
-  //       ...bookingData,
-  //       doctor_name: doctor.name,
-  //       specialty: doctor.specialty,
-  //       hospitalId,
-  //     });
-  //     alert("Appointment booked successfully!");
-  //     setSelectedDoctor(null);
-  //     setBookingData({
-  //       user_name: "",
-  //       mobile: "",
-  //       email: "",
-  //       booking_date: "",
-  //       booking_time: "",
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to book appointment. Try again.");
-  //   } finally {
-  //     setBookingLoading(false);
-  //   }
-  // };
+  const handleBookingSubmit = async (
+    doctor: DoctorWithHospitalSchedules,
+    hospitalId: string
+  ) => {
+    if (
+      !bookingData.booking_date ||
+      !bookingData.email ||
+      !bookingData.user_name ||
+      !bookingData.mobile
+    ) {
+      alert("Please fill in all the booking fields.");
+      return;
+    }
 
-  const handleBookingSubmit = async (phone: string) => {
     setBookingLoading(true);
     try {
-      // open dialer
-      window.location.href = `tel:${phone}`;
+      const userId = localStorage.getItem("userId"); // or fetch from auth state if available
+      if (!userId) {
+        navigate("/login");
+        alert("User not logged in.");
+        setBookingLoading(false);
+        return;
+      }
+
+      await apiClient.post(`/api/bookings/${hospitalId}`, {
+        userId,
+        specialty: doctor.specialty,
+        doctor_name: doctor.name,
+        booking_date: bookingData.booking_date,
+      });
+
+      successToast("Appointment booked successfully!");
+      setSelectedDoctor(null);
+      setBookingData({
+        user_name: "",
+        mobile: "",
+        email: "",
+        booking_date: "",
+      });
+    } catch (error) {
+      console.error("Booking failed", error);
+      alert("Failed to book appointment. Please try again.");
     } finally {
       setBookingLoading(false);
     }
@@ -266,11 +275,6 @@ const DoctorsPage: React.FC = () => {
           className="fixed inset-0 z-50 flex justify-center items-end"
           onClick={() => setSelectedDoctor(null)}
         >
-          <>
-            {(() => {
-              console.log(selectedDoctor, "<selectedDoctor>");
-            })()}
-          </>
           <div className="absolute inset-0 bg-black bg-opacity-50" />
           <div
             className="relative w-full max-w-lg bg-white rounded-t-3xl shadow-lg p-6 max-h-[90vh] overflow-y-auto animate-slideUp z-50"
@@ -339,15 +343,10 @@ const DoctorsPage: React.FC = () => {
                   className="space-y-3"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    // handleBookingSubmit(selectedDoctor, hs.hospitalId);
-                    handleBookingSubmit(hs.phone);
+                    handleBookingSubmit(selectedDoctor, hs.hospitalId);
                   }}
                 >
-                  {/* <div className="relative">
-                    <User
-                      className="absolute left-3 top-3 text-green-500"
-                      size={18}
-                    />
+                  <div className="relative">
                     <input
                       type="text"
                       name="user_name"
@@ -355,14 +354,10 @@ const DoctorsPage: React.FC = () => {
                       value={bookingData.user_name}
                       onChange={handleBookingChange}
                       required
-                      className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full pl-4 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div className="relative">
-                    <Phone
-                      className="absolute left-3 top-3 text-green-500"
-                      size={18}
-                    />
                     <input
                       type="tel"
                       name="mobile"
@@ -370,44 +365,30 @@ const DoctorsPage: React.FC = () => {
                       value={bookingData.mobile}
                       onChange={handleBookingChange}
                       required
-                      className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full pl-4 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div className="relative">
-                    <Mail
-                      className="absolute left-3 top-3 text-green-500"
-                      size={18}
-                    />
                     <input
                       type="email"
                       name="email"
                       placeholder="Email"
                       value={bookingData.email}
                       onChange={handleBookingChange}
-                      className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      required
+                      className="w-full pl-4 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div className="relative">
-                    <Calendar
-                      className="absolute left-3 top-3 text-green-500"
-                      size={18}
-                    />
                     <input
                       type="date"
                       name="booking_date"
                       value={bookingData.booking_date}
                       onChange={handleBookingChange}
                       required
-                      className="w-full pl-10 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full pl-4 pr-3 py-2 border border-green-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
-                  <button
-                    type="submit"
-                    disabled={bookingLoading}
-                    className="w-full py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition"
-                  >
-                    {bookingLoading ? "Booking..." : "Book Appointment"}
-                  </button> */}
                   <button
                     type="submit"
                     disabled={bookingLoading}
