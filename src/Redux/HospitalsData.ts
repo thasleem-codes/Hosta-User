@@ -32,7 +32,8 @@ export interface Doctor {
   _id?: string;
   name: string;
   qualification: string;
-  consulting: ConsultingDay[]; // 👈 updated here
+  consulting: ConsultingDay[];
+  bookingOpen?: boolean;
 }
 
 // Doctor with hospital schedules
