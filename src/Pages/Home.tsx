@@ -60,7 +60,7 @@ export default function HomePage() {
     };
 
     fetchAds();
-  }, [ads]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-green-50">
