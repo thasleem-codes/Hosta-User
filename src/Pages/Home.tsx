@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Slider from "react-slik";
+import Slider from "react-slick";
 import {
   Ambulance,
   Building2,
@@ -11,7 +11,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Navbar from "../Components/Navbar";
 import { Link } from "react-router-dom";
-import { getCurrentLocation } from "./Components/getCurrentLocation";
+import { getCurrentLocation } from "../Components/getCurrentLocation";
 import { apiClient } from "../Components/Axios";
 
 const features = [
@@ -46,7 +46,6 @@ export default function HomePage() {
     const fetchAds = async () => {
       try {
         const [lat, lng] = await getCurrentLocation();
-        console.log("User location:", lat, lng);
 
         const res = await apiClient.get(
           `/api/ads/nearby?lat=${lat}&lng=${lng}`
@@ -61,7 +60,7 @@ export default function HomePage() {
     };
 
     fetchAds();
-  }, []);
+  }, [ads]);
 
   return (
     <div className="min-h-screen bg-green-50">
