@@ -46,12 +46,9 @@ export default function HomePage() {
     const fetchAds = async () => {
       try {
         const [lat, lng] = await getCurrentLocation();
-        console.log("User location:", lat, lng);
-
         const res = await apiClient.get(
           `/api/ads/nearby?lat=${lat}&lng=${lng}`
         );
-        console.log("Fetched ads:", res.data);
         setAds(res.data.data || res.data); // adapt depending on backend response
       } catch (err) {
         console.error("Error fetching ads:", err);

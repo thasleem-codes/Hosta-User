@@ -26,6 +26,7 @@
     "react-swipeable": "^7.0.2",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.1",
     "world-countries": "^5.1.0"
   },
   "devDependencies": {
